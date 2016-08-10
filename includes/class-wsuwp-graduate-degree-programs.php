@@ -7,6 +7,13 @@ class WSUWP_Graduate_Degree_Programs {
 	private static $instance;
 
 	/**
+	 * The slug used to register the factsheet post type.
+	 *
+	 * @var string
+	 */
+	var $post_type_slug = 'gs-factsheet';
+
+	/**
 	 * Maintain and return the one instance. Initiate hooks when
 	 * called the first time.
 	 *
@@ -29,6 +36,7 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function setup_hooks() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 	}
 
 	/**
@@ -65,6 +73,32 @@ class WSUWP_Graduate_Degree_Programs {
 			'has_archive' => 'degrees',
 			'rewrite' => array( 'slug' => 'degrees/factsheet', 'with_front' => false ),
 		);
-		register_post_type( 'gs-factsheet', $args );
+		register_post_type( $this->post_type_slug, $args );
+	}
+
+	/**
+	 * Add the meta boxes used to capture information about a degree factsheet.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param string $post_type
+	 */
+	public function add_meta_boxes( $post_type ) {
+		if ( $this->post_type_slug !== $post_type ) {
+			return;
+		}
+
+		add_meta_box( 'factsheet-primary', 'Factsheet Data', array( $this, 'display_factsheet_primary_meta_box' ), null, 'normal', 'high' );
+	}
+
+	/**
+	 * Capture the main set of data about a degree factsheet.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param WP_Post $post The current post object.
+	 */
+	public function display_factsheet_primary_meta_box( $post ) {
+		echo '';
 	}
 }
