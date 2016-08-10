@@ -177,6 +177,17 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @return string The sanitized GPA.
 	 */
 	public static function sanitize_gpa( $gpa ) {
+		$dot_count = substr_count( $gpa, '.' );
+
+		if ( 0 === $dot_count ) {
+			$gpa = absint( $gpa ) . '.0';
+		} elseif ( 1 === $dot_count ) {
+			$gpa = explode( '.', $gpa );
+			$gpa = absint( $gpa[0] ) . '.' . absint( $gpa[1] );
+		} else {
+			$gpa = '0.0';
+		}
+
 		return $gpa;
 	}
 }
