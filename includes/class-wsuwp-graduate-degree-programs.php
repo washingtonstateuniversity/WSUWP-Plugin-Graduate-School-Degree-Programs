@@ -19,22 +19,86 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @var array
 	 */
 	var $post_meta_keys = array(
-		'gsdp_degree_description',
-		'gsdp_degree_id',
-		'gsdp_accepting_applications',
-		'gsdp_include_in_programs',
-		'gsdp_grad_students_total',
-		'gsdp_grad_students_aided',
-		'gsdp_admission_gpa',
-		'gsdp_degree_url',
-		'gsdp_program_name',
-		'gsdp_oracle_name',
-		'gsdp_plan_name',
-		'gsdp_admission_requirements',
-		'gsdp_student_opportunities',
-		'gsdp_career_opportunities',
-		'gsdp_career_placements',
-		'gsdp_student_learning_outcome',
+		'gsdp_degree_description' => array(
+			'description' => 'Description of the graduate degree',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
+		'gsdp_degree_id' => array(
+			'description' => 'Factsheet degree ID',
+			'type' => 'int',
+			'sanitize_callback' => 'absint',
+		),
+		'gsdp_accepting_applications' => array(
+			'description' => 'Accepting applications',
+			'type' => 'bool',
+			'sanitize_callback' => 'absint',
+		),
+		'gsdp_include_in_programs' => array(
+			'description' => 'Include in programs list',
+			'type' => 'bool',
+			'sanitize_callback' => 'absint',
+		),
+		'gsdp_grad_students_total' => array(
+			'description' => 'Total number of grad students',
+			'type' => 'int',
+			'sanitize_callback' => 'absint',
+		),
+		'gsdp_grad_students_aided' => array(
+			'description' => 'Number of aided grad students',
+			'type' => 'int',
+			'sanitize_callback' => 'absint',
+		),
+		'gsdp_admission_gpa' => array(
+			'description' => 'Admission GPA',
+			'type' => 'string',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_gpa',
+		),
+		'gsdp_degree_url' => array(
+			'description' => 'Degree home page',
+			'type' => 'string',
+			'sanitize_callback' => 'esc_url_raw',
+		),
+		'gsdp_program_name' => array(
+			'description' => 'Program name',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'gsdp_oracle_name' => array(
+			'description' => 'Oracle program name',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'gsdp_plan_name' => array(
+			'description' => 'Plan name',
+			'type' => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		),
+		'gsdp_admission_requirements' => array(
+			'description' => 'Admission requirements',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
+		'gsdp_student_opportunities' => array(
+			'description' => 'Student opportunities',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
+		'gsdp_career_opportunities' => array(
+			'description' => 'Career opportunities',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
+		'gsdp_career_placements' => array(
+			'description' => 'Career placements',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
+		'gsdp_student_learning_outcome' => array(
+			'description' => 'Student learning outcome',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
 	);
 
 	/**
@@ -105,93 +169,11 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @since 0.1.0
 	 */
 	public function register_meta() {
-		$default_args = array(
-			'show_in_rest' => true,
-			'single' => true,
-		);
-
-		$args = $default_args;
-
-
-		$args['description'] = 'Factsheet degree ID';
-		$args['type'] = 'int';
-		$args['sanitize_callback'] = 'absint';
-		register_meta( 'post', 'gsdp_degree_id', $args );
-
-		$args['description'] = 'Accepting applications';
-		$args['type'] = 'bool';
-		$args['sanitize_callback'] = 'absint';
-		register_meta( 'post', 'gsdp_accepting_applications', $args );
-
-		$args['description'] = 'Include in programs list';
-		$args['type'] = 'bool';
-		$args['sanitize_callback'] = 'absint';
-		register_meta( 'post', 'gsdp_include_in_programs', $args );
-
-		$args['description'] = 'Total number of grad students';
-		$args['type'] = 'int';
-		$args['sanitize_callback'] = 'absint';
-		register_meta( 'post', 'gsdp_grad_students_total', $args );
-
-		$args['description'] = 'Number of aided grad students';
-		$args['type'] = 'int';
-		$args['sanitize_callback'] = 'absint';
-		register_meta( 'post', 'gsdp_grad_students_aided', $args );
-
-		$args['description'] = 'Admission GPA';
-		$args['type'] = 'string';
-		$args['sanitize_callback'] = 'WSUWP_Graduate_Degree_Programs::sanitize_gpa';
-		register_meta( 'post', 'gsdp_admission_gpa', $args );
-
-		$args['description'] = 'Degree home page';
-		$args['type'] = 'string';
-		$args['sanitize_callback'] = 'esc_url_raw';
-		register_meta( 'post', 'gsdp_degree_url', $args );
-
-		$args['description'] = 'Program name';
-		$args['type'] = 'string';
-		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( 'post', 'gsdp_program_name', $args );
-
-		$args['description'] = 'Oracle program name';
-		$args['type'] = 'string';
-		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( 'post', 'gsdp_oracle_name', $args );
-
-		$args['description'] = 'Plan name';
-		$args['type'] = 'string';
-		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( 'post', 'gsdp_plan_name', $args );
-
-		$args['description'] = 'Description of the graduate degree';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_degree_description', $args );
-
-		$args['description'] = 'Admission requirements';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_admission_requirements', $args );
-
-		$args['description'] = 'Student opportunities';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_student_opportunities', $args );
-
-		$args['description'] = 'Career opportunities';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_career_opportunities', $args );
-
-		$args['description'] = 'Career placements';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_career_placements', $args );
-
-		$args['description'] = 'Student learning outcome';
-		$args['type'] = 'textarea';
-		$args['sanitize_callback'] = 'wp_kses_post';
-		register_meta( 'post', 'gsdp_student_learning_outcome', $args );
+		foreach( $this->post_meta_keys as $key => $args ) {
+			$args['show_in_rest'] = true;
+			$args['single'] = true;
+			register_meta( 'post', $key, $args );
+		}
 	}
 
 	/**
@@ -217,7 +199,6 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @param WP_Post $post The current post object.
 	 */
 	public function display_factsheet_primary_meta_box( $post ) {
-		$keys = get_registered_meta_keys( 'post' );
 		$data = get_registered_metadata( 'post', $post->ID );
 
 		$wp_editor_settings = array(
@@ -229,11 +210,10 @@ class WSUWP_Graduate_Degree_Programs {
 		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
 
 		echo '<div class="factsheet-primary-inputs">';
-		foreach( $this->post_meta_keys as $key ) {
-			if ( ! isset( $keys[ $key ] ) ) {
-				continue;
+		foreach( $this->post_meta_keys as $key => $meta ) {
+			if ( ! isset( $data[ $key ] ) || ! isset( $data[ $key ][0] ) ) {
+				$data[ $key ] = array( false );
 			}
-			$meta = $keys[ $key ];
 			?>
 			<div class="factsheet-primary-input factsheet-<?php echo esc_attr( $meta['type'] ); ?>"">
 				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description']); ?></label>
@@ -304,7 +284,7 @@ class WSUWP_Graduate_Degree_Programs {
 
 		$keys = get_registered_meta_keys( 'post' );
 
-		foreach( $this->post_meta_keys as $key ) {
+		foreach( $this->post_meta_keys as $key => $meta ) {
 			if ( isset( $_POST[ $key ] ) && isset( $keys[ $key ] ) && isset( $keys[ $key ][ 'sanitize_callback'] ) ) {
 				// Each piece of meta is registered with sanitization.
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
