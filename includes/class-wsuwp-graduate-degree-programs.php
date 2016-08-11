@@ -21,6 +21,8 @@ class WSUWP_Graduate_Degree_Programs {
 	var $post_meta_keys = array(
 		'gsdp_degree_description',
 		'gsdp_degree_id',
+		'gsdp_accepting_applications',
+		'gsdp_include_in_programs',
 		'gsdp_grad_students_total',
 		'gsdp_grad_students_aided',
 		'gsdp_admission_gpa',
@@ -115,6 +117,16 @@ class WSUWP_Graduate_Degree_Programs {
 		$args['type'] = 'int';
 		$args['sanitize_callback'] = 'absint';
 		register_meta( 'post', 'gsdp_degree_id', $args );
+
+		$args['description'] = 'Accepting applications';
+		$args['type'] = 'bool';
+		$args['sanitize_callback'] = 'absint';
+		register_meta( 'post', 'gsdp_accepting_applications', $args );
+
+		$args['description'] = 'Include in programs list';
+		$args['type'] = 'bool';
+		$args['sanitize_callback'] = 'absint';
+		register_meta( 'post', 'gsdp_include_in_programs', $args );
 
 		$args['description'] = 'Total number of grad students';
 		$args['type'] = 'int';
@@ -232,6 +244,12 @@ class WSUWP_Graduate_Degree_Programs {
 					?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
 				} elseif ( 'textarea' === $meta['type'] ) {
 					wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
+				} elseif ( 'bool' === $meta['type'] ) {
+					?><select name="<?php echo esc_attr( $key ); ?>">
+						<option value="0" <?php selected( 0, absint( $data[ $key ][0] ) ); ?>>No</option>
+						<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
+					</select>
+					<?php
 				}
 			?>
 			</div>
