@@ -31,6 +31,8 @@ class WSUWP_Graduate_Degree_Programs {
 		'gsdp_admission_requirements',
 		'gsdp_student_opportunities',
 		'gsdp_career_opportunities',
+		'gsdp_career_placements',
+		'gsdp_student_learning_outcome',
 	);
 
 	/**
@@ -168,6 +170,16 @@ class WSUWP_Graduate_Degree_Programs {
 		$args['type'] = 'textarea';
 		$args['sanitize_callback'] = 'wp_kses_post';
 		register_meta( 'post', 'gsdp_career_opportunities', $args );
+
+		$args['description'] = 'Career placements';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_career_placements', $args );
+
+		$args['description'] = 'Student learning outcome';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_student_learning_outcome', $args );
 	}
 
 	/**
