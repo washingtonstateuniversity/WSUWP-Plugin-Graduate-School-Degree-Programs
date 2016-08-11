@@ -14,6 +14,22 @@ class WSUWP_Graduate_Degree_Programs {
 	var $post_type_slug = 'gs-factsheet';
 
 	/**
+	 * A list of post meta keys associated with factsheets.
+	 *
+	 * @var array
+	 */
+	var $post_meta_keys = array(
+		'gsdp_degree_id',
+		'gsdp_grad_students_total',
+		'gsdp_grad_students_aided',
+		'gsdp_admission_gpa',
+		'gsdp_degree_url',
+		'gsdp_program_name',
+		'gsdp_oracle_name',
+		'gsdp_plan_name',
+	);
+
+	/**
 	 * Maintain and return the one instance. Initiate hooks when
 	 * called the first time.
 	 *
@@ -38,6 +54,7 @@ class WSUWP_Graduate_Degree_Programs {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
 	}
 
 	/**
@@ -90,45 +107,46 @@ class WSUWP_Graduate_Degree_Programs {
 
 		$args = $default_args;
 
+
 		$args['description'] = 'Factsheet degree ID';
 		$args['type'] = 'int';
 		$args['sanitize_callback'] = 'absint';
-		register_meta( $this->post_type_slug, 'gsdp_degree_id', $args );
+		register_meta( 'post', 'gsdp_degree_id', $args );
 
 		$args['description'] = 'Total number of grad students';
 		$args['type'] = 'int';
 		$args['sanitize_callback'] = 'absint';
-		register_meta( $this->post_type_slug, 'gsdp_grad_students_total', $args );
+		register_meta( 'post', 'gsdp_grad_students_total', $args );
 
 		$args['description'] = 'Number of aided grad students';
 		$args['type'] = 'int';
 		$args['sanitize_callback'] = 'absint';
-		register_meta( $this->post_type_slug, 'gsdp_grad_students_aided', $args );
+		register_meta( 'post', 'gsdp_grad_students_aided', $args );
 
 		$args['description'] = 'Admission GPA';
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'WSUWP_Graduate_Degree_Programs::sanitize_gpa';
-		register_meta( $this->post_type_slug, 'gsdp_admission_gpa', $args );
+		register_meta( 'post', 'gsdp_admission_gpa', $args );
 
 		$args['description'] = 'Degree home page';
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'esc_url_raw';
-		register_meta( $this->post_type_slug, 'gsdp_degree_url', $args );
+		register_meta( 'post', 'gsdp_degree_url', $args );
 
 		$args['description'] = 'Program name';
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( $this->post_type_slug, 'gsdp_program_name', $args );
+		register_meta( 'post', 'gsdp_program_name', $args );
 
 		$args['description'] = 'Oracle program name';
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( $this->post_type_slug, 'gsdp_oracle_name', $args );
+		register_meta( 'post', 'gsdp_oracle_name', $args );
 
 		$args['description'] = 'Plan name';
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'sanitize_text_field';
-		register_meta( $this->post_type_slug, 'gsdp_plan_name', $args );
+		register_meta( 'post', 'gsdp_plan_name', $args );
 	}
 
 	/**
@@ -154,17 +172,21 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @param WP_Post $post The current post object.
 	 */
 	public function display_factsheet_primary_meta_box( $post ) {
-		$keys = get_registered_meta_keys( $post->post_type );
-		$data = get_registered_metadata( $post->post_type, $post->ID );
+		$keys = get_registered_meta_keys( 'post' );
+		$data = get_registered_metadata( 'post', $post->ID );
 
 		echo '<div class="factsheet-primary-inputs">';
-		foreach( $keys as $key => $meta ) {
+		foreach( $this->post_meta_keys as $key ) {
+			if ( ! isset( $keys[ $key ] ) ) {
+				continue;
+			}
+			$meta = $keys[ $key ];
 			?>
 			<div class="factsheet-primary-input factsheet-<?php echo esc_attr( $meta['type'] ); ?>"">
 				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description']); ?></label>
 				<input type="text"
 				       name="<?php echo esc_attr( $key ); ?>"
-				       value="<?php if ( 'int' === $meta['type'] ) { echo absint( $data[ $key ] ); } else { echo esc_attr( $data[ $key ] ); } ?>" />
+				       value="<?php if ( 'int' === $meta['type'] ) { echo absint( $data[ $key ][0] ); } else { echo esc_attr( $data[ $key ][0] ); } ?>" />
 			</div>
 			<?php
 		}
@@ -189,5 +211,35 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		return $gpa;
+	}
+
+	/**
+	 * Save additional data associated with a factsheet.
+	 *
+	 * @param int     $post_id
+	 * @param WP_Post $post
+	 */
+	public function save_factsheet( $post_id, $post ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( 'auto-draft' === $post->post_status ) {
+			return;
+		}
+
+		// Do not overwrite existing information during an import.
+		if ( defined( 'WP_IMPORTING' ) && WP_IMPORTING ) {
+			return;
+		}
+
+		$keys = get_registered_meta_keys( 'post' );
+
+		foreach( $this->post_meta_keys as $key ) {
+			if ( isset( $_POST[ $key ] ) && isset( $keys[ $key ] ) && isset( $keys[ $key ][ 'sanitize_callback'] ) ) {
+				// Each piece of meta is registered with sanitization.
+				update_post_meta( $post_id, $key, $_POST[ $key ] );
+			}
+		}
 	}
 }
