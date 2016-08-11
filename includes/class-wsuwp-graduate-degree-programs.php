@@ -175,6 +175,8 @@ class WSUWP_Graduate_Degree_Programs {
 		$keys = get_registered_meta_keys( 'post' );
 		$data = get_registered_metadata( 'post', $post->ID );
 
+		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
+
 		echo '<div class="factsheet-primary-inputs">';
 		foreach( $this->post_meta_keys as $key ) {
 			if ( ! isset( $keys[ $key ] ) ) {
@@ -230,6 +232,10 @@ class WSUWP_Graduate_Degree_Programs {
 
 		// Do not overwrite existing information during an import.
 		if ( defined( 'WP_IMPORTING' ) && WP_IMPORTING ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['_gsdp_primary_nonce'] ) || ! wp_verify_nonce( $_POST['_gsdp_primary_nonce'], 'save-gsdp-primary' ) ) {
 			return;
 		}
 
