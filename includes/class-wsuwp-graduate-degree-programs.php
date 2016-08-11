@@ -19,6 +19,7 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @var array
 	 */
 	var $post_meta_keys = array(
+		'gsdp_degree_description',
 		'gsdp_degree_id',
 		'gsdp_grad_students_total',
 		'gsdp_grad_students_aided',
@@ -27,7 +28,6 @@ class WSUWP_Graduate_Degree_Programs {
 		'gsdp_program_name',
 		'gsdp_oracle_name',
 		'gsdp_plan_name',
-		'gsdp_degree_description',
 		'gsdp_admission_requirements',
 		'gsdp_student_opportunities',
 		'gsdp_career_opportunities',
