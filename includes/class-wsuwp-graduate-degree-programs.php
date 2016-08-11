@@ -84,9 +84,6 @@ class WSUWP_Graduate_Degree_Programs {
 			'menu_icon' => 'dashicons-groups',
 			'supports' => array (
 				'title',
-				'editor',
-				'revisions',
-				'thumbnail',
 			),
 			'has_archive' => 'degrees',
 			'rewrite' => array( 'slug' => 'degrees/factsheet', 'with_front' => false ),
