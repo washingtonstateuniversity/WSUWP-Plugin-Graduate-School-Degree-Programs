@@ -27,6 +27,7 @@ class WSUWP_Graduate_Degree_Programs {
 		'gsdp_program_name',
 		'gsdp_oracle_name',
 		'gsdp_plan_name',
+		'gsdp_degree_description',
 	);
 
 	/**
@@ -144,6 +145,11 @@ class WSUWP_Graduate_Degree_Programs {
 		$args['type'] = 'string';
 		$args['sanitize_callback'] = 'sanitize_text_field';
 		register_meta( 'post', 'gsdp_plan_name', $args );
+
+		$args['description'] = 'Description of the graduate degree';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_degree_description', $args );
 	}
 
 	/**
@@ -172,6 +178,12 @@ class WSUWP_Graduate_Degree_Programs {
 		$keys = get_registered_meta_keys( 'post' );
 		$data = get_registered_metadata( 'post', $post->ID );
 
+		$wp_editor_settings = array(
+			'textarea_rows' => 10,
+			'media_buttons' => false,
+			'teeny' => true,
+		);
+
 		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
 
 		echo '<div class="factsheet-primary-inputs">';
@@ -183,9 +195,15 @@ class WSUWP_Graduate_Degree_Programs {
 			?>
 			<div class="factsheet-primary-input factsheet-<?php echo esc_attr( $meta['type'] ); ?>"">
 				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description']); ?></label>
-				<input type="text"
-				       name="<?php echo esc_attr( $key ); ?>"
-				       value="<?php if ( 'int' === $meta['type'] ) { echo absint( $data[ $key ][0] ); } else { echo esc_attr( $data[ $key ][0] ); } ?>" />
+			<?php
+				if ( 'int' === $meta['type'] ) {
+					?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo absint( $data[ $key ][0] ); ?>" /><?php
+				} elseif ( 'string' === $meta['type'] ) {
+					?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
+				} elseif ( 'textarea' === $meta['type'] ) {
+					wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
+				}
+			?>
 			</div>
 			<?php
 		}
