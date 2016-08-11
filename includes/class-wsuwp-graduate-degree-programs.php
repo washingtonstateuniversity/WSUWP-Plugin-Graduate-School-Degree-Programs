@@ -28,6 +28,9 @@ class WSUWP_Graduate_Degree_Programs {
 		'gsdp_oracle_name',
 		'gsdp_plan_name',
 		'gsdp_degree_description',
+		'gsdp_admission_requirements',
+		'gsdp_student_opportunities',
+		'gsdp_career_opportunities',
 	);
 
 	/**
@@ -150,6 +153,21 @@ class WSUWP_Graduate_Degree_Programs {
 		$args['type'] = 'textarea';
 		$args['sanitize_callback'] = 'wp_kses_post';
 		register_meta( 'post', 'gsdp_degree_description', $args );
+
+		$args['description'] = 'Admission requirements';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_admission_requirements', $args );
+
+		$args['description'] = 'Student opportunities';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_student_opportunities', $args );
+
+		$args['description'] = 'Career opportunities';
+		$args['type'] = 'textarea';
+		$args['sanitize_callback'] = 'wp_kses_post';
+		register_meta( 'post', 'gsdp_career_opportunities', $args );
 	}
 
 	/**
