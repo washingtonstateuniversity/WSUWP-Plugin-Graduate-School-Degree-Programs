@@ -154,7 +154,7 @@ class WSUWP_Graduate_Degree_Programs {
 			'public' => true,
 			'hierarchical' => false,
 			'menu_icon' => 'dashicons-groups',
-			'supports' => array (
+			'supports' => array(
 				'title',
 			),
 			'has_archive' => 'degrees',
@@ -169,7 +169,7 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @since 0.1.0
 	 */
 	public function register_meta() {
-		foreach( $this->post_meta_keys as $key => $args ) {
+		foreach ( $this->post_meta_keys as $key => $args ) {
 			$args['show_in_rest'] = true;
 			$args['single'] = true;
 			register_meta( 'post', $key, $args );
@@ -210,27 +210,27 @@ class WSUWP_Graduate_Degree_Programs {
 		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
 
 		echo '<div class="factsheet-primary-inputs">';
-		foreach( $this->post_meta_keys as $key => $meta ) {
+		foreach ( $this->post_meta_keys as $key => $meta ) {
 			if ( ! isset( $data[ $key ] ) || ! isset( $data[ $key ][0] ) ) {
 				$data[ $key ] = array( false );
 			}
 			?>
 			<div class="factsheet-primary-input factsheet-<?php echo esc_attr( $meta['type'] ); ?>"">
-				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description']); ?></label>
+				<label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $meta['description'] ); ?></label>
 			<?php
-				if ( 'int' === $meta['type'] ) {
-					?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo absint( $data[ $key ][0] ); ?>" /><?php
-				} elseif ( 'string' === $meta['type'] ) {
-					?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
-				} elseif ( 'textarea' === $meta['type'] ) {
-					wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
-				} elseif ( 'bool' === $meta['type'] ) {
-					?><select name="<?php echo esc_attr( $key ); ?>">
-						<option value="0" <?php selected( 0, absint( $data[ $key ][0] ) ); ?>>No</option>
-						<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
-					</select>
-					<?php
-				}
+			if ( 'int' === $meta['type'] ) {
+				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo absint( $data[ $key ][0] ); ?>" /><?php
+			} elseif ( 'string' === $meta['type'] ) {
+				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
+			} elseif ( 'textarea' === $meta['type'] ) {
+				wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
+			} elseif ( 'bool' === $meta['type'] ) {
+				?><select name="<?php echo esc_attr( $key ); ?>">
+					<option value="0" <?php selected( 0, absint( $data[ $key ][0] ) ); ?>>No</option>
+					<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
+				</select>
+				<?php
+			}
 			?>
 			</div>
 			<?php
@@ -284,8 +284,8 @@ class WSUWP_Graduate_Degree_Programs {
 
 		$keys = get_registered_meta_keys( 'post' );
 
-		foreach( $this->post_meta_keys as $key => $meta ) {
-			if ( isset( $_POST[ $key ] ) && isset( $keys[ $key ] ) && isset( $keys[ $key ][ 'sanitize_callback'] ) ) {
+		foreach ( $this->post_meta_keys as $key => $meta ) {
+			if ( isset( $_POST[ $key ] ) && isset( $keys[ $key ] ) && isset( $keys[ $key ]['sanitize_callback'] ) ) {
 				// Each piece of meta is registered with sanitization.
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
 			}
