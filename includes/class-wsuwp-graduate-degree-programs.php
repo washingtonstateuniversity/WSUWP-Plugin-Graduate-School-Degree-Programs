@@ -64,11 +64,6 @@ class WSUWP_Graduate_Degree_Programs {
 			'type' => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 		),
-		'gsdp_oracle_name' => array(
-			'description' => 'Oracle program name',
-			'type' => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-		),
 		'gsdp_plan_name' => array(
 			'description' => 'Plan name',
 			'type' => 'string',
