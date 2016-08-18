@@ -118,7 +118,7 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @since 0.0.1
 	 */
 	public function setup_hooks() {
-		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_post_type' ), 15 );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
@@ -156,6 +156,7 @@ class WSUWP_Graduate_Degree_Programs {
 			'rewrite' => array( 'slug' => 'degrees/factsheet', 'with_front' => false ),
 		);
 		register_post_type( $this->post_type_slug, $args );
+		register_taxonomy_for_object_type( 'wsuwp_university_location', $this->post_type_slug );
 	}
 
 	/**
