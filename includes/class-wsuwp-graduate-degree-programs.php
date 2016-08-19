@@ -6,6 +6,14 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	private static $instance;
 
+	/*
+	 * Track a version number for the scripts registered in
+	 * this object to enable cache busting.
+	 *
+	 * @var string
+	 */
+	var $script_version = '0001';
+
 	/**
 	 * The slug used to register the factsheet post type.
 	 *
@@ -118,10 +126,22 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @since 0.0.1
 	 */
 	public function setup_hooks() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'init', array( $this, 'register_post_type' ), 15 );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
+	}
+
+	/**
+	 * Enqueue scripts and styles used in the admin.
+	 *
+	 * @param string $hook_suffix
+	 */
+	public function admin_enqueue_scripts( $hook_suffix ) {
+		if ( 'post.php' === $hook_suffix && 'gs-factsheet' === get_current_screen()->id ) {
+			wp_enqueue_script( 'gsdp-admin', plugins_url( '/js/admin.js', dirname( __FILE__ ) ), 'jquery', $this->script_version, true );
+		}
 	}
 
 	/**
@@ -170,6 +190,13 @@ class WSUWP_Graduate_Degree_Programs {
 			$args['single'] = true;
 			register_meta( 'post', $key, $args );
 		}
+
+		$args = array(
+			'description' => 'Student learning outcome',
+			'type' => 'string',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_faculty_list',
+		);
+		register_meta( 'post', 'gsdp_assigned_faculty', $args );
 	}
 
 	/**
@@ -185,6 +212,7 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		add_meta_box( 'factsheet-primary', 'Factsheet Data', array( $this, 'display_factsheet_primary_meta_box' ), null, 'normal', 'high' );
+		add_meta_box( 'factsheet-faculty', 'Faculty Advisors', array( $this, 'display_factsheet_faculty_meta_box' ), null, 'side', 'default' );
 	}
 
 	/**
@@ -235,6 +263,22 @@ class WSUWP_Graduate_Degree_Programs {
 	}
 
 	/**
+	 * Maintain the list of faculty associated with a factsheet as advisors through
+	 * communication with people.wsu.edu.
+	 *
+	 * @param WP_Post $post The current post object.
+	 */
+	public function display_factsheet_faculty_meta_box( $post ) {
+		$assigned_faculty = get_post_meta( $post->ID, 'gsdp_assigned_faculty', true );
+
+		?>
+		<label for="faculty_slug">Add faculty members by their people.wsu.edu slug</label>
+		<input type="text" name="faculty_slug" id="faculty_slug" />
+		<button type="button" id="add-faculty">Add faculty</button>
+		<?php
+	}
+
+	/**
 	 * @param string $gpa The unsanitized GPA.
 	 *
 	 * @return string The sanitized GPA.
@@ -252,6 +296,15 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		return $gpa;
+	}
+
+	/**
+	 * @param array $faculty Unsanitized array of people.wsu slugs.
+	 *
+	 * @return array Sanitized array of people.wsu slugs.
+	 */
+	public static function sanitize_faculty_list( $faculty ) {
+		return $faculty;
 	}
 
 	/**
@@ -285,6 +338,10 @@ class WSUWP_Graduate_Degree_Programs {
 				// Each piece of meta is registered with sanitization.
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
 			}
+		}
+
+		if ( isset( $_POST['gsdp_assigned_faculty'] ) && isset( $keys['gsdp_assigned_faculty'] ) && isset( $keys['gsdp_assigned_faculty']['sanitize_callback'] ) ) {
+			update_post_meta( $post_id, 'gsdp_assigned_faculty', $_POST['gsdp_assigned_faculty'] );
 		}
 	}
 }
