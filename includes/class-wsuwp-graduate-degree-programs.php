@@ -131,6 +131,7 @@ class WSUWP_Graduate_Degree_Programs {
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
+		add_action( 'wp_ajax_gsdp_verify_person', array( $this, 'verify_person_ajax' ), 10 );
 	}
 
 	/**
@@ -272,10 +273,38 @@ class WSUWP_Graduate_Degree_Programs {
 		$assigned_faculty = get_post_meta( $post->ID, 'gsdp_assigned_faculty', true );
 
 		?>
+		<input id="gsdp_verify_nonce" type="hidden" value="<?php echo esc_attr( wp_create_nonce( 'verify-faculty' ) ); ?>" />
 		<label for="faculty_slug">Add faculty members by their people.wsu.edu slug</label>
 		<input type="text" name="faculty_slug" id="faculty_slug" />
 		<button type="button" id="add-faculty">Add faculty</button>
 		<?php
+	}
+
+	/**
+	 * Verify whether a person exists as part of the people directory.
+	 *
+	 * @since 0.0.1
+	 */
+	public function verify_person_ajax() {
+		check_ajax_referer( 'verify-faculty', 'ajax_nonce' );
+
+		$person_slug = sanitize_user( $_POST['gsdp_person'] );
+
+		$response = wp_remote_get( 'https://people.wsu.edu/wp-json/wp/v2/people?filter[name]=' . $person_slug );
+
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
+			$data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $data ) ) {
+				echo wp_json_encode( array( 'error' => 'Person is not available.' ) );
+			} else {
+				echo wp_json_encode( array( 'success' => true ) );
+			}
+		} else {
+			echo wp_json_encode( array( 'error' => absint( wp_remote_retrieve_response_code( $response ) ) ) );
+		}
+
+		wp_die();
 	}
 
 	/**
