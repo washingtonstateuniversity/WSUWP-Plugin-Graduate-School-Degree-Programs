@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="WSUWP Graduate Degree Programs">
     <description>Sniffs for the coding standards of the WSUWP Graduate Degree Programs plugin</description>
-
     <rule ref="WordPress-Extra">
         <exclude name="WordPress.NamingConventions.ValidFunctionName" />
     </rule>
