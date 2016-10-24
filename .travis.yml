@@ -18,25 +18,16 @@ branches:
 matrix:
   include:
     - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0
+      env: WP_VERSION=latest WP_MULTISITE=0 WP_TRAVISCI=phpcs
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=1
-    - php: 5.6
-      env: WP_VERSION=nightly WP_MULTISITE=0
     - php: 5.6
       env: WP_VERSION=nightly WP_MULTISITE=1
     - php: 7.0
-      env: WP_VERSION=latest WP_MULTISITE=0
-    - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=1
-    - php: 5.6
-      env: WP_TRAVISCI=phpcs
 
 before_script:
-    - |
-      if [[ ! -z "$WP_VERSION" ]] ; then
-        bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-      fi
+    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - |
       if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
         npm install
@@ -44,10 +35,7 @@ before_script:
       fi
 
 script:
-    - |
-      if [[ ! -z "$WP_VERSION" ]] ; then
-        phpunit
-      fi
+    - phpunit
     - |
       if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
         grunt phpcs

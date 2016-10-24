@@ -56,7 +56,7 @@ class WSUWP_Graduate_Degree_Programs {
 			'public' => true,
 			'hierarchical' => false,
 			'menu_icon' => 'dashicons-groups',
-			'supports' => array (
+			'supports' => array(
 				'title',
 				'editor',
 				'revisions',
