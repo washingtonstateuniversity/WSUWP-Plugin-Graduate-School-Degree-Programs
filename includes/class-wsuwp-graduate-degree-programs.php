@@ -272,7 +272,6 @@ class WSUWP_Graduate_Degree_Programs {
 		$assigned_faculty = get_post_meta( $post->ID, 'gsdp_assigned_faculty', true );
 
 		?>
-		<input id="gsdp_verify_nonce" type="hidden" value="<?php echo esc_attr( wp_create_nonce( 'verify-faculty' ) ); ?>" />
 		<label for="faculty_slug">Add faculty members by their people.wsu.edu slug</label>
 		<input type="text" name="faculty_slug" id="faculty_slug" />
 		<button type="button" id="add-faculty">Add faculty</button>
