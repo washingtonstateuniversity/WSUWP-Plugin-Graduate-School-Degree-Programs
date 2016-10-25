@@ -3,5 +3,6 @@
     <description>Sniffs for the coding standards of the WSUWP Graduate Degree Programs plugin</description>
     <rule ref="WordPress-Extra">
         <exclude name="WordPress.NamingConventions.ValidFunctionName" />
+        <exclude name="WordPress.PHP.DisallowAlternativePHPTags"/>
     </rule>
 </ruleset>

@@ -1,29 +1,33 @@
-(function($, window){
+(function($, _, window){
+	var $faculty_slug = $( "#faculty_slug" );
+	var error_template = $( "#faculty-error" ).html();
+	var faculty_template = $( "#faculty-template" ).html();
+
 	$( "#add-faculty" ).on( 'click', function() {
-		var $faculty_slug = $( "#faculty_slug" );
 
-		var ajax_nonce = $('#gsdp_verify_nonce').val();
+		var request_url = "https://people.wsu.edu/wp-json/wp/v2/people?filter[name]=" + $faculty_slug.val();
 
-		// process slug against people.wsu.edu
-		var data = {
-			action: 'gsdp_verify_person',
-			gsdp_person:  $faculty_slug.val(),
-			ajax_nonce: ajax_nonce
-		};
+		$.get( request_url ).
+			fail( function() {
 
-		// Make the ajax call
-		$.post( window.ajaxurl, data, function( response ) {
-			response = JSON.parse( response );
+			} ).
+			done( function( data, textStatus, request ) {
+				if ( 1 != request.getResponseHeader("X-WP-Total") ) {
+				} else {
+					var faculty = {
+						id: data[0].id,
+						slug: data[0].slug,
+						first_name: data[0].first_name,
+						last_name: data[0].last_name
+					};
 
-			if ( response.success ) {
-				// add slug to existing list display
-				// add slug to hidden input containing all slugs
-			} else {
-				// show an error about invalid user
-			}
-		});
+					_.templateSettings.variable = "faculty";
+
+					$( ".faculty_added" ).append( _.template( faculty_template )( faculty ) );
+				}
+			} );
 
 		// empty input field.
 		$faculty_slug.val( "" );
 	} );
-}(jQuery, window));
+}(jQuery, _, window));
