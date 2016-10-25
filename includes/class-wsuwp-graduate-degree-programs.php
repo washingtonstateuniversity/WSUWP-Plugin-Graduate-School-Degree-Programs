@@ -391,6 +391,8 @@ class WSUWP_Graduate_Degree_Programs {
 			}
 
 			update_post_meta( $post_id, 'gsdp_assigned_faculty', $faculty );
+		} else {
+			delete_post_meta( $post_id, 'gsdp_assigned_faculty' );
 		}
 	}
 }
