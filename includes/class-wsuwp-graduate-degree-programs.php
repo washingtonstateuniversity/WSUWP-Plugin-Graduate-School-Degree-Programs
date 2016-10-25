@@ -140,6 +140,7 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
 		if ( 'post.php' === $hook_suffix && 'gs-factsheet' === get_current_screen()->id ) {
+			wp_enqueue_style( 'gsdp-admin', plugins_url( '/css/admin.css', dirname( __FILE__ ) ), array(), $this->script_version );
 			wp_enqueue_script( 'gsdp-admin', plugins_url( '/js/admin.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), $this->script_version, true );
 		}
 	}

@@ -1,0 +1,45 @@
+.factsheet-primary-inputs {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+.factsheet-primary-input {
+	flex-basis: 40%;
+	padding-bottom: 10px;
+}
+
+.factsheet-string {
+	flex-basis: 80%;
+}
+
+.factsheet-textarea {
+	padding-top: 20px;
+	flex-basis: 80%;
+	padding-bottom: 20px;
+}
+
+.factsheet-primary-input label {
+	font-size: 1.1em;
+	font-weight: 400;
+	color: #333;
+	padding-right: 1em;
+}
+
+.factsheet-textarea label {
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.factsheet-int input,
+.factsheet-bool select {
+	float: right;
+	margin-right: 4rem;
+	width: 55px;
+}
+
+.factsheet-string input {
+	width: 100%;
+}
