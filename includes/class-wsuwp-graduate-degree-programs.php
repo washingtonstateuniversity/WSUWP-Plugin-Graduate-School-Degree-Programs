@@ -276,9 +276,9 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		?>
-		<label for="faculty_slug">Add faculty members by their people.wsu.edu slug</label>
-		<input type="text" name="faculty_slug" id="faculty_slug" />
-		<button type="button" id="add-faculty">Add faculty</button>
+		<label for="faculty_slug" class="faculty-label">Add faculty members by their people.wsu.edu slug or WSU NID</label>
+		<input type="text" name="faculty_slug" id="faculty_slug" class="faculty-slug-input" />
+		<button type="button" id="add-faculty" class="button button-small button-faculty">Add faculty</button>
 		<div class="faculty_added">
 			<?php
 			foreach ( $assigned_faculty as $faculty ) {
