@@ -282,19 +282,25 @@ class WSUWP_Graduate_Degree_Programs {
 			<?php
 			foreach ( $assigned_faculty as $faculty ) {
 				?>
-				<span class="faculty"><?php echo esc_html( $faculty['first_name'] ); ?> <?php echo esc_html( $faculty['last_name'] ); ?></span>
-				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][first_name]" value="<?php echo esc_attr( $faculty['first_name'] ); ?>" />
-				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][last_name]" value="<?php echo esc_attr( $faculty['last_name'] ); ?>" />
-				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][slug]" value="<?php echo esc_attr( $faculty['slug'] ); ?>" />
+				<div class="faculty" data-faculty-id="<?php echo absint( $faculty['id'] ); ?>">
+					<?php echo esc_html( $faculty['first_name'] ); ?> <?php echo esc_html( $faculty['last_name'] ); ?>
+					<span class="remove-faculty">Remove</span>
+					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][first_name]" value="<?php echo esc_attr( $faculty['first_name'] ); ?>" />
+					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][last_name]" value="<?php echo esc_attr( $faculty['last_name'] ); ?>" />
+					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][slug]" value="<?php echo esc_attr( $faculty['slug'] ); ?>" />
+				</div>
 				<?php
 			}
 			?>
 		</div>
 		<script type="text/template" id="faculty-template">
-			<span class="faculty"><%- faculty.first_name %> <%- faculty.last_name %></span>
-			<input type="hidden" name="faculty_ids[<%- faculty.id %>][first_name]" value="<%- faculty.first_name %>" />
-			<input type="hidden" name="faculty_ids[<%- faculty.id %>][last_name]" value="<%- faculty.last_name %>" />
-			<input type="hidden" name="faculty_ids[<%- faculty.id %>][slug]" value="<%- faculty.slug %>" />
+			<div class="faculty" data-faculty-id="<%- faculty.id %>">
+				<%- faculty.first_name %> <%- faculty.last_name %>
+				<span class="remove-faculty">Remove</span>
+				<input type="hidden" name="faculty_ids[<%- faculty.id %>][first_name]" value="<%- faculty.first_name %>" />
+				<input type="hidden" name="faculty_ids[<%- faculty.id %>][last_name]" value="<%- faculty.last_name %>" />
+				<input type="hidden" name="faculty_ids[<%- faculty.id %>][slug]" value="<%- faculty.slug %>" />
+			</div>
 		</script>
 		<script type="text/template" id="faculty-error">
 			<span class="error"></span>
