@@ -3,6 +3,10 @@
 	var error_template = $( "#faculty-error" ).html();
 	var faculty_template = $( "#faculty-template" ).html();
 
+	function remove_faculty_member( e ) {
+		$( e.target ).parent().remove();
+	}
+
 	$( "#add-faculty" ).on( 'click', function() {
 
 		var request_url = "https://people.wsu.edu/wp-json/wp/v2/people?filter[name]=" + $faculty_slug.val();
@@ -24,10 +28,13 @@
 					_.templateSettings.variable = "faculty";
 
 					$( ".faculty_added" ).append( _.template( faculty_template )( faculty ) );
+					$( ".remove-faculty" ).off( "click", remove_faculty_member ).on( "click", remove_faculty_member );
 				}
 			} );
 
 		// empty input field.
 		$faculty_slug.val( "" );
 	} );
+
+	$( ".remove-faculty" ).on( "click", remove_faculty_member );
 }(jQuery, _, window));
