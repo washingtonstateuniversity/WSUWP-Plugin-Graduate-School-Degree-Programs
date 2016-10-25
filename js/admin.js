@@ -1,6 +1,5 @@
 (function($, _, window){
 	var $faculty_slug = $( "#faculty_slug" );
-	var error_template = $( "#faculty-error" ).html();
 	var faculty_template = $( "#faculty-template" ).html();
 
 	function remove_faculty_member( e ) {
