@@ -270,15 +270,31 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function display_factsheet_faculty_meta_box( $post ) {
 		$assigned_faculty = get_post_meta( $post->ID, 'gsdp_assigned_faculty', true );
+		if ( empty( $assigned_faculty ) ) {
+			$assigned_faculty = array();
+		}
 
 		?>
 		<label for="faculty_slug">Add faculty members by their people.wsu.edu slug</label>
 		<input type="text" name="faculty_slug" id="faculty_slug" />
 		<button type="button" id="add-faculty">Add faculty</button>
-		<div class="faculty_added"></div>
+		<div class="faculty_added">
+			<?php
+			foreach ( $assigned_faculty as $faculty ) {
+				?>
+				<span class="faculty"><?php echo esc_html( $faculty['first_name'] ); ?> <?php echo esc_html( $faculty['last_name'] ); ?></span>
+				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][first_name]" value="<?php echo esc_attr( $faculty['first_name'] ); ?>" />
+				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][last_name]" value="<?php echo esc_attr( $faculty['last_name'] ); ?>" />
+				<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][slug]" value="<?php echo esc_attr( $faculty['slug'] ); ?>" />
+				<?php
+			}
+			?>
+		</div>
 		<script type="text/template" id="faculty-template">
 			<span class="faculty"><%- faculty.first_name %> <%- faculty.last_name %></span>
-			<input type="hidden" name="faculty_ids[<%- faculty.id %>]" value="<%- faculty.slug %>" />
+			<input type="hidden" name="faculty_ids[<%- faculty.id %>][first_name]" value="<%- faculty.first_name %>" />
+			<input type="hidden" name="faculty_ids[<%- faculty.id %>][last_name]" value="<%- faculty.last_name %>" />
+			<input type="hidden" name="faculty_ids[<%- faculty.id %>][slug]" value="<%- faculty.slug %>" />
 		</script>
 		<script type="text/template" id="faculty-error">
 			<span class="error"></span>
@@ -348,8 +364,27 @@ class WSUWP_Graduate_Degree_Programs {
 			}
 		}
 
-		if ( isset( $_POST['gsdp_assigned_faculty'] ) && isset( $keys['gsdp_assigned_faculty'] ) && isset( $keys['gsdp_assigned_faculty']['sanitize_callback'] ) ) {
-			update_post_meta( $post_id, 'gsdp_assigned_faculty', $_POST['gsdp_assigned_faculty'] );
+		if ( isset( $_POST['faculty_ids'] ) ) {
+			$faculty = array();
+
+			foreach ( $_POST['faculty_ids'] as $faculty_id => $faculty_data ) {
+				$faculty_id = absint( $faculty_id );
+				if ( 0 >= $faculty_id ) {
+					continue;
+				}
+
+				$faculty_slug = sanitize_text_field( $faculty_data['slug'] );
+				if ( empty( $faculty_slug ) ) {
+					continue;
+				}
+
+				$first_name = sanitize_text_field( $faculty_data['first_name'] );
+				$last_name = sanitize_text_field( $faculty_data['last_name'] );
+
+				$faculty[] = array( 'id' => $faculty_id, 'first_name' => $first_name, 'last_name' => $last_name, 'slug' => $faculty_slug );
+			}
+
+			update_post_meta( $post_id, 'gsdp_assigned_faculty', $faculty );
 		}
 	}
 }
