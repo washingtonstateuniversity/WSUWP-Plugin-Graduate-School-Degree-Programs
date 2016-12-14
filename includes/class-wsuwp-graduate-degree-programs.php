@@ -126,7 +126,11 @@ class WSUWP_Graduate_Degree_Programs {
 	 * @since 0.0.1
 	 */
 	public function setup_hooks() {
+		require_once( dirname( __FILE__ ) . '/class-graduate-degree-faculty-taxonomy.php' );
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+
+		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 14 );
 		add_action( 'init', array( $this, 'register_post_type' ), 15 );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );

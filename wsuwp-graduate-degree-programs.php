@@ -25,3 +25,12 @@ add_action( 'after_setup_theme', 'WSUWP_Graduate_Degree_Programs' );
 function WSUWP_Graduate_Degree_Programs() {
 	return WSUWP_Graduate_Degree_Programs::get_instance();
 }
+
+/**
+ * Retrieve the instance of the graduate degree faculty taxonomy.
+ *
+ * @return WSUWP_Graduate_Degree_Faculty_Taxonomy
+ */
+function WSUWP_Graduate_Degree_Faculty_Taxonomy() {
+	return WSUWP_Graduate_Degree_Faculty_Taxonomy::get_instance();
+}
