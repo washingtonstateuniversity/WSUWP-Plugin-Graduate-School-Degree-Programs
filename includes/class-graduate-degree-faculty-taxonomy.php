@@ -126,7 +126,7 @@ class WSUWP_Graduate_Degree_Faculty_Taxonomy {
 	 * @param WP_Term $term
 	 */
 	public function term_edit_form_fields( $term ) {
-		$degree_abbreviation = get_term_meta( $term->term_id, 'gs_degree_abbreviation', true);
+		$degree_abbreviation = get_term_meta( $term->term_id, 'gs_degree_abbreviation', true );
 		$email = get_term_meta( $term->term_id, 'gs_faculty_email', true );
 		$chair = get_term_meta( $term->term_id, 'gs_may_chair', true ) ? 'yes' : 'no';
 		$cochair = get_term_meta( $term->term_id, 'gs_may_cochair', true ) ? 'yes' : 'no';
