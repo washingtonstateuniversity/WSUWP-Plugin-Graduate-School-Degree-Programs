@@ -43,33 +43,3 @@
 .factsheet-string input {
 	width: 100%;
 }
-
-.faculty_added {
-	margin-top: 10px;
-	border-top: 1px dashed #ccc;
-}
-
-.faculty {
-	margin-top: 10px;
-	color: #333;
-}
-
-.remove-faculty {
-	float: right;
-	text-decoration: underline;
-	color: blue;
-	cursor: pointer;
-}
-
-.wp-core-ui .button-faculty {
-	margin-top: 3px;
-}
-
-.faculty-label {
-	color: #666;
-	font-style: italic;
-}
-
-.faculty-slug-input {
-	margin-top: 10px;
-}

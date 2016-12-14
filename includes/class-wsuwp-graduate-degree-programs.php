@@ -145,7 +145,6 @@ class WSUWP_Graduate_Degree_Programs {
 	public function admin_enqueue_scripts( $hook_suffix ) {
 		if ( 'post.php' === $hook_suffix && 'gs-factsheet' === get_current_screen()->id ) {
 			wp_enqueue_style( 'gsdp-admin', plugins_url( '/css/admin.css', dirname( __FILE__ ) ), array(), $this->script_version );
-			wp_enqueue_script( 'gsdp-admin', plugins_url( '/js/admin.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), $this->script_version, true );
 		}
 	}
 
@@ -195,13 +194,6 @@ class WSUWP_Graduate_Degree_Programs {
 			$args['single'] = true;
 			register_meta( 'post', $key, $args );
 		}
-
-		$args = array(
-			'description' => 'Student learning outcome',
-			'type' => 'string',
-			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_faculty_list',
-		);
-		register_meta( 'post', 'gsdp_assigned_faculty', $args );
 	}
 
 	/**
@@ -217,7 +209,6 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		add_meta_box( 'factsheet-primary', 'Factsheet Data', array( $this, 'display_factsheet_primary_meta_box' ), null, 'normal', 'high' );
-		add_meta_box( 'factsheet-faculty', 'Faculty Advisors', array( $this, 'display_factsheet_faculty_meta_box' ), null, 'side', 'default' );
 	}
 
 	/**
@@ -268,52 +259,6 @@ class WSUWP_Graduate_Degree_Programs {
 	}
 
 	/**
-	 * Maintain the list of faculty associated with a factsheet as advisors through
-	 * communication with people.wsu.edu.
-	 *
-	 * @param WP_Post $post The current post object.
-	 */
-	public function display_factsheet_faculty_meta_box( $post ) {
-		$assigned_faculty = get_post_meta( $post->ID, 'gsdp_assigned_faculty', true );
-		if ( empty( $assigned_faculty ) ) {
-			$assigned_faculty = array();
-		}
-
-		?>
-		<label for="faculty_slug" class="faculty-label">Add faculty members by their people.wsu.edu slug or WSU NID</label>
-		<input type="text" name="faculty_slug" id="faculty_slug" class="faculty-slug-input" />
-		<button type="button" id="add-faculty" class="button button-small button-faculty">Add faculty</button>
-		<div class="faculty_added">
-			<?php
-			foreach ( $assigned_faculty as $faculty ) {
-				?>
-				<div class="faculty" data-faculty-id="<?php echo absint( $faculty['id'] ); ?>">
-					<?php echo esc_html( $faculty['first_name'] ); ?> <?php echo esc_html( $faculty['last_name'] ); ?>
-					<span class="remove-faculty">Remove</span>
-					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][first_name]" value="<?php echo esc_attr( $faculty['first_name'] ); ?>" />
-					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][last_name]" value="<?php echo esc_attr( $faculty['last_name'] ); ?>" />
-					<input type="hidden" name="faculty_ids[<?php echo absint( $faculty['id'] ); ?>][slug]" value="<?php echo esc_attr( $faculty['slug'] ); ?>" />
-				</div>
-				<?php
-			}
-			?>
-		</div>
-		<script type="text/template" id="faculty-template">
-			<div class="faculty" data-faculty-id="<%- faculty.id %>">
-				<%- faculty.first_name %> <%- faculty.last_name %>
-				<span class="remove-faculty">Remove</span>
-				<input type="hidden" name="faculty_ids[<%- faculty.id %>][first_name]" value="<%- faculty.first_name %>" />
-				<input type="hidden" name="faculty_ids[<%- faculty.id %>][last_name]" value="<%- faculty.last_name %>" />
-				<input type="hidden" name="faculty_ids[<%- faculty.id %>][slug]" value="<%- faculty.slug %>" />
-			</div>
-		</script>
-		<script type="text/template" id="faculty-error">
-			<span class="error"></span>
-		</script>
-		<?php
-	}
-
-	/**
 	 * @param string $gpa The unsanitized GPA.
 	 *
 	 * @return string The sanitized GPA.
@@ -331,15 +276,6 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		return $gpa;
-	}
-
-	/**
-	 * @param array $faculty Unsanitized array of people.wsu slugs.
-	 *
-	 * @return array Sanitized array of people.wsu slugs.
-	 */
-	public static function sanitize_faculty_list( $faculty ) {
-		return $faculty;
 	}
 
 	/**
@@ -373,31 +309,6 @@ class WSUWP_Graduate_Degree_Programs {
 				// Each piece of meta is registered with sanitization.
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
 			}
-		}
-
-		if ( isset( $_POST['faculty_ids'] ) ) {
-			$faculty = array();
-
-			foreach ( $_POST['faculty_ids'] as $faculty_id => $faculty_data ) {
-				$faculty_id = absint( $faculty_id );
-				if ( 0 >= $faculty_id ) {
-					continue;
-				}
-
-				$faculty_slug = sanitize_text_field( $faculty_data['slug'] );
-				if ( empty( $faculty_slug ) ) {
-					continue;
-				}
-
-				$first_name = sanitize_text_field( $faculty_data['first_name'] );
-				$last_name = sanitize_text_field( $faculty_data['last_name'] );
-
-				$faculty[] = array( 'id' => $faculty_id, 'first_name' => $first_name, 'last_name' => $last_name, 'slug' => $faculty_slug );
-			}
-
-			update_post_meta( $post_id, 'gsdp_assigned_faculty', $faculty );
-		} else {
-			delete_post_meta( $post_id, 'gsdp_assigned_faculty' );
 		}
 	}
 }
