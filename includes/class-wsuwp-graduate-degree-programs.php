@@ -130,8 +130,8 @@ class WSUWP_Graduate_Degree_Programs {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
-		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 14 );
 		add_action( 'init', array( $this, 'register_post_type' ), 15 );
+		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 15 );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
