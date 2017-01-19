@@ -75,11 +75,6 @@ class WSUWP_Graduate_Degree_Programs {
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
 		),
-		'gsdp_plan_name' => array(
-			'description' => 'Plan name',
-			'type' => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-		),
 		'gsdp_admission_requirements' => array(
 			'description' => 'Admission requirements',
 			'type' => 'textarea',
