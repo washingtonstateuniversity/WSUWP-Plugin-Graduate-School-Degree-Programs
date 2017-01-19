@@ -21,6 +21,16 @@
 	padding-bottom: 20px;
 }
 
+.factsheet-float,
+.factsheet-int,
+.factsheet-bool,
+.factsheet-string {
+	font-size: 1.2em;
+	line-height: 1.3;
+	margin-top: 1em;
+}
+
+
 .factsheet-primary-input label {
 	font-size: 1.1em;
 	font-weight: 400;
@@ -33,13 +43,16 @@
 	font-weight: 600;
 }
 
+.factsheet-float input,
 .factsheet-int input,
 .factsheet-bool select {
 	float: right;
+	line-height: 1.3;
 	margin-right: 4rem;
 	width: 55px;
 }
 
 .factsheet-string input {
+	line-height: 1.3;
 	width: 100%;
 }
