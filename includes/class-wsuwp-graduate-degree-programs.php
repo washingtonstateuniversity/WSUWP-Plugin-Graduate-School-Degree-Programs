@@ -127,11 +127,13 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function setup_hooks() {
 		require_once( dirname( __FILE__ ) . '/class-graduate-degree-faculty-taxonomy.php' );
+		require_once( dirname( __FILE__ ) . '/class-graduate-degree-program-name-taxonomy.php' );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		add_action( 'init', array( $this, 'register_post_type' ), 15 );
 		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 15 );
+		add_action( 'init', 'WSUWP_Graduate_Degree_Program_Name_Taxonomy', 15 );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );

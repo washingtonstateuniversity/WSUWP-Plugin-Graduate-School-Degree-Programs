@@ -34,3 +34,12 @@ function WSUWP_Graduate_Degree_Programs() {
 function WSUWP_Graduate_Degree_Faculty_Taxonomy() {
 	return WSUWP_Graduate_Degree_Faculty_Taxonomy::get_instance();
 }
+
+/**
+ * Retrieves the instance of the graduate degree program name taxonomy.
+ *
+ * @return WSUWP_Graduate_Degree_Program_Name_Taxonomy
+ */
+function WSUWP_Graduate_Degree_Program_Name_Taxonomy() {
+	return WSUWP_Graduate_Degree_Program_Name_Taxonomy::get_instance();
+}
