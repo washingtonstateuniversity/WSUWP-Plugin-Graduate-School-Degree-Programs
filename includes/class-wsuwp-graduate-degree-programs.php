@@ -2,6 +2,8 @@
 
 class WSUWP_Graduate_Degree_Programs {
 	/**
+	 * @since 0.0.1
+	 *
 	 * @var WSUWP_Graduate_Degree_Programs
 	 */
 	private static $instance;
@@ -10,6 +12,8 @@ class WSUWP_Graduate_Degree_Programs {
 	 * Track a version number for the scripts registered in
 	 * this object to enable cache busting.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @var string
 	 */
 	var $script_version = '0001';
@@ -17,12 +21,16 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * The slug used to register the factsheet post type.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @var string
 	 */
 	var $post_type_slug = 'gs-factsheet';
 
 	/**
 	 * A list of post meta keys associated with factsheets.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var array
 	 */
@@ -142,6 +150,8 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Enqueue scripts and styles used in the admin.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @param string $hook_suffix
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
@@ -188,7 +198,7 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Register the meta keys used to store degree factsheet data.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
@@ -216,7 +226,7 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Capture the main set of data about a degree factsheet.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 *
 	 * @param WP_Post $post The current post object.
 	 */
@@ -282,6 +292,8 @@ class WSUWP_Graduate_Degree_Programs {
 
 	/**
 	 * Save additional data associated with a factsheet.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @param int     $post_id
 	 * @param WP_Post $post

@@ -2,12 +2,16 @@
 
 class WSUWP_Graduate_Degree_Program_Name_Taxonomy {
 	/**
+	 * @since 0.0.1
+	 *
 	 * @var WSUWP_Graduate_Degree_Program_Name_Taxonomy
 	 */
 	private static $instance;
 
 	/**
 	 * The slug used to register the program name taxonomy.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var string
 	 */
