@@ -67,7 +67,7 @@ class WSUWP_Graduate_Degree_Programs {
 		),
 		'gsdp_admission_gpa' => array(
 			'description' => 'Admission GPA',
-			'type' => 'string',
+			'type' => 'float',
 			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_gpa',
 		),
 		'gsdp_degree_url' => array(
@@ -200,6 +200,10 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
+			if ( 'float' === $args['type'] ) {
+				$args['type'] = 'string';
+			}
+
 			$args['show_in_rest'] = true;
 			$args['single'] = true;
 			register_meta( 'post', $key, $args );
@@ -250,7 +254,7 @@ class WSUWP_Graduate_Degree_Programs {
 			<?php
 			if ( 'int' === $meta['type'] ) {
 				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo absint( $data[ $key ][0] ); ?>" /><?php
-			} elseif ( 'string' === $meta['type'] ) {
+			} elseif ( 'string' === $meta['type'] || 'float' === $meta['type'] ) {
 				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
 			} elseif ( 'textarea' === $meta['type'] ) {
 				wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
