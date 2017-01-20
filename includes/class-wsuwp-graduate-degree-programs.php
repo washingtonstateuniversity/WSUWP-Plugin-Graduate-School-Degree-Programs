@@ -80,6 +80,11 @@ class WSUWP_Graduate_Degree_Programs {
 			'type' => 'deadlines',
 			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_deadlines',
 		),
+		'gsdp_requirements' => array(
+			'description' => 'Requirements',
+			'type' => 'requirements',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_requirements',
+		),
 		'gsdp_admission_requirements' => array(
 			'description' => 'Admission requirements',
 			'type' => 'textarea',
@@ -200,8 +205,8 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
-			// Float and deadlines are special types that are stored as strings.
-			if ( 'float' === $args['type'] || 'deadlines' === $args['type'] ) {
+			// We have several data types that are stored as strings.
+			if ( 'float' === $args['type'] || 'deadlines' === $args['type'] || 'requirements' === $args['type'] ) {
 				$args['type'] = 'string';
 			}
 
@@ -266,28 +271,29 @@ class WSUWP_Graduate_Degree_Programs {
 					<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
 				</select>
 				<?php
-			} elseif ( 'deadlines' === $meta['type'] ) {
+			} elseif ( 'deadlines' === $meta['type'] || 'requirements' === $meta['type'] ) {
 				$field_data = json_decode( $data[ $key ][0] );
 
-				?><div class="factsheet-deadline-wrapper"><?php
+				if ( empty( $field_data ) ) {
+					$field_data = array();
+				}
+
+				echo '<div class="factsheet-' . esc_attr( $meta['type'] ) . '-wrapper">';
 
 				foreach( $field_data as $field_datum ) {
-					?>
-					<span class="factsheet-deadline-field">
-						<input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="<?php echo esc_attr( $field_datum ); ?>" />
-						<span class="remove-factsheet-deadline-field">Remove</span>
-					</span>
-					<?php
+					echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
+
+					?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="<?php echo esc_attr( $field_datum ); ?>" /><?php
+
+					echo '<span class="remove-factsheet-' . esc_attr( $meta['type'] ) . '-field">Remove</span></span>';
 				}
 
 				// Always provide an extra field to start with.
-				?>
-					<span class="factsheet-deadline-field">
-						<input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" />
-					</span>
-					<span class="factsheet-add-deadline">Add</span>
-				</div><!-- End factsheet-deadline-wrapper -->
-				<?php
+				echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
+
+				?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" /></span><?php
+
+				echo '<span class="factsheet-add-' . esc_attr( $meta['type'] ) . '">Add</span></div>';
 
 			}
 
