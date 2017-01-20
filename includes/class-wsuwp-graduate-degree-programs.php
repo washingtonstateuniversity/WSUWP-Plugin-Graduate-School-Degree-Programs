@@ -75,6 +75,11 @@ class WSUWP_Graduate_Degree_Programs {
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
 		),
+		'gsdp_deadlines' => array(
+			'description' => 'Deadlines',
+			'type' => 'deadlines',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_deadlines',
+		),
 		'gsdp_admission_requirements' => array(
 			'description' => 'Admission requirements',
 			'type' => 'textarea',
@@ -195,7 +200,8 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
-			if ( 'float' === $args['type'] ) {
+			// Float and deadlines are special types that are stored as strings.
+			if ( 'float' === $args['type'] || 'deadlines' === $args['type'] ) {
 				$args['type'] = 'string';
 			}
 
@@ -239,6 +245,7 @@ class WSUWP_Graduate_Degree_Programs {
 		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
 
 		echo '<div class="factsheet-primary-inputs">';
+
 		foreach ( $this->post_meta_keys as $key => $meta ) {
 			if ( ! isset( $data[ $key ] ) || ! isset( $data[ $key ][0] ) ) {
 				$data[ $key ] = array( false );
@@ -259,10 +266,33 @@ class WSUWP_Graduate_Degree_Programs {
 					<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
 				</select>
 				<?php
+			} elseif ( 'deadlines' === $meta['type'] ) {
+				$field_data = json_decode( $data[ $key ][0] );
+
+				?><div class="factsheet-deadline-wrapper"><?php
+
+				foreach( $field_data as $field_datum ) {
+					?>
+					<span class="factsheet-deadline-field">
+						<input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="<?php echo esc_attr( $field_datum ); ?>" />
+						<span class="remove-factsheet-deadline-field">Remove</span>
+					</span>
+					<?php
+				}
+
+				// Always provide an extra field to start with.
+				?>
+					<span class="factsheet-deadline-field">
+						<input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" />
+					</span>
+					<span class="factsheet-add-deadline">Add</span>
+				</div><!-- End factsheet-deadline-wrapper -->
+				<?php
+
 			}
-			?>
-			</div>
-			<?php
+
+			echo '</div>';
+
 		}
 		echo '</div>';
 	}
@@ -285,6 +315,28 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		return $gpa;
+	}
+
+	/**
+	 * Sanitizes a set of deadlines stored in a string.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $deadlines
+	 *
+	 * @return string
+	 */
+	public static function sanitize_deadlines( $deadlines ) {
+		if ( ! is_array( $deadlines ) || 0 === count( $deadlines ) ) {
+			return '';
+		}
+
+		$deadlines = array_map( 'sanitize_text_field', $deadlines );
+		$deadlines = array_filter( $deadlines );
+
+		$deadlines = wp_json_encode( $deadlines );
+
+		return $deadlines;
 	}
 
 	/**
