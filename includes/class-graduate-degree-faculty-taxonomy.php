@@ -2,12 +2,16 @@
 
 class WSUWP_Graduate_Degree_Faculty_Taxonomy {
 	/**
+	 * @since 0.0.1
+	 *
 	 * @var WSUWP_Graduate_Degree_Faculty_Taxonomy
 	 */
 	private static $instance;
 
 	/**
 	 * The slug used to register the faculty taxonomy.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var string
 	 */

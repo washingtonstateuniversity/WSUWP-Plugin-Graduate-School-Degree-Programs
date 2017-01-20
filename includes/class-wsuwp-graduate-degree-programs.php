@@ -2,6 +2,8 @@
 
 class WSUWP_Graduate_Degree_Programs {
 	/**
+	 * @since 0.0.1
+	 *
 	 * @var WSUWP_Graduate_Degree_Programs
 	 */
 	private static $instance;
@@ -10,12 +12,16 @@ class WSUWP_Graduate_Degree_Programs {
 	 * Track a version number for the scripts registered in
 	 * this object to enable cache busting.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @var string
 	 */
 	var $script_version = '0001';
 
 	/**
 	 * The slug used to register the factsheet post type.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @var string
 	 */
@@ -24,9 +30,16 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * A list of post meta keys associated with factsheets.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @var array
 	 */
 	var $post_meta_keys = array(
+		'gsdp_degree_description' => array(
+			'description' => 'Description of the graduate degree',
+			'type' => 'textarea',
+			'sanitize_callback' => 'wp_kses_post',
+		),
 		'gsdp_degree_id' => array(
 			'description' => 'Factsheet degree ID',
 			'type' => 'int',
@@ -54,28 +67,13 @@ class WSUWP_Graduate_Degree_Programs {
 		),
 		'gsdp_admission_gpa' => array(
 			'description' => 'Admission GPA',
-			'type' => 'string',
+			'type' => 'float',
 			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_gpa',
 		),
 		'gsdp_degree_url' => array(
 			'description' => 'Degree home page',
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
-		),
-		'gsdp_program_name' => array(
-			'description' => 'Program name',
-			'type' => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-		),
-		'gsdp_plan_name' => array(
-			'description' => 'Plan name',
-			'type' => 'string',
-			'sanitize_callback' => 'sanitize_text_field',
-		),
-		'gsdp_degree_description' => array(
-			'description' => 'Description of the graduate degree',
-			'type' => 'textarea',
-			'sanitize_callback' => 'wp_kses_post',
 		),
 		'gsdp_admission_requirements' => array(
 			'description' => 'Admission requirements',
@@ -127,11 +125,16 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function setup_hooks() {
 		require_once( dirname( __FILE__ ) . '/class-graduate-degree-faculty-taxonomy.php' );
+		require_once( dirname( __FILE__ ) . '/class-graduate-degree-program-name-taxonomy.php' );
+		require_once( dirname( __FILE__ ) . '/class-graduate-degree-degree-type-taxonomy.php' );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		add_action( 'init', array( $this, 'register_post_type' ), 15 );
 		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 15 );
+		add_action( 'init', 'WSUWP_Graduate_Degree_Program_Name_Taxonomy', 15 );
+		add_action( 'init', 'WSUWP_Graduate_Degree_Degree_Type_Taxonomy', 15 );
+
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
@@ -140,10 +143,12 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Enqueue scripts and styles used in the admin.
 	 *
+	 * @since 0.0.1
+	 *
 	 * @param string $hook_suffix
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'post.php' === $hook_suffix && 'gs-factsheet' === get_current_screen()->id ) {
+		if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) && 'gs-factsheet' === get_current_screen()->id ) {
 			wp_enqueue_style( 'gsdp-admin', plugins_url( '/css/admin.css', dirname( __FILE__ ) ), array(), $this->script_version );
 		}
 	}
@@ -186,10 +191,14 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Register the meta keys used to store degree factsheet data.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
+			if ( 'float' === $args['type'] ) {
+				$args['type'] = 'string';
+			}
+
 			$args['show_in_rest'] = true;
 			$args['single'] = true;
 			register_meta( 'post', $key, $args );
@@ -214,7 +223,7 @@ class WSUWP_Graduate_Degree_Programs {
 	/**
 	 * Capture the main set of data about a degree factsheet.
 	 *
-	 * @since 0.1.0
+	 * @since 0.0.1
 	 *
 	 * @param WP_Post $post The current post object.
 	 */
@@ -240,7 +249,7 @@ class WSUWP_Graduate_Degree_Programs {
 			<?php
 			if ( 'int' === $meta['type'] ) {
 				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo absint( $data[ $key ][0] ); ?>" /><?php
-			} elseif ( 'string' === $meta['type'] ) {
+			} elseif ( 'string' === $meta['type'] || 'float' === $meta['type'] ) {
 				?><input type="text" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $data[ $key ][0] ); ?>" /><?php
 			} elseif ( 'textarea' === $meta['type'] ) {
 				wp_editor( $data[ $key ][0], esc_attr( $key ), $wp_editor_settings );
@@ -280,6 +289,8 @@ class WSUWP_Graduate_Degree_Programs {
 
 	/**
 	 * Save additional data associated with a factsheet.
+	 *
+	 * @since 0.0.1
 	 *
 	 * @param int     $post_id
 	 * @param WP_Post $post
