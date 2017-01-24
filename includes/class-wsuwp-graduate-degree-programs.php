@@ -282,7 +282,7 @@ class WSUWP_Graduate_Degree_Programs {
 
 				echo '<div class="factsheet-' . esc_attr( $meta['type'] ) . '-wrapper">';
 
-				foreach( $field_data as $field_datum ) {
+				foreach ( $field_data as $field_datum ) {
 					echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
 
 					?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="<?php echo esc_attr( $field_datum ); ?>" /><?php
