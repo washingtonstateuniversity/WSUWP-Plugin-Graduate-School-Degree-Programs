@@ -348,6 +348,28 @@ class WSUWP_Graduate_Degree_Programs {
 	}
 
 	/**
+	 * Sanitizes a set of requirements stored in a string.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $requirements
+	 *
+	 * @return string
+	 */
+	public static function sanitize_requirements( $requirements ) {
+		if ( ! is_array( $requirements ) || 0 === count( $requirements ) ) {
+			return '';
+		}
+
+		$requirements = array_map( 'sanitize_text_field', $requirements );
+		$requirements = array_filter( $requirements );
+
+		$requirements = wp_json_encode( $requirements );
+
+		return $requirements;
+	}
+
+	/**
 	 * Save additional data associated with a factsheet.
 	 *
 	 * @since 0.0.1
