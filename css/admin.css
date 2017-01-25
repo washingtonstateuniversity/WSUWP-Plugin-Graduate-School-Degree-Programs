@@ -83,3 +83,14 @@
 .factsheet-add-deadlines {
 	width: 50px;
 }
+
+.remove-factsheet-requirements-field,
+.remove-factsheet-deadlines-field {
+	color: #0073aa;
+	cursor: pointer;
+}
+
+.remove-factsheet-requirements-field:hover,
+.remove-factsheet-deadlines-field:hover {
+	color: #00a0d2;
+}
