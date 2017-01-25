@@ -75,6 +75,16 @@ class WSUWP_Graduate_Degree_Programs {
 			'type' => 'string',
 			'sanitize_callback' => 'esc_url_raw',
 		),
+		'gsdp_deadlines' => array(
+			'description' => 'Deadlines',
+			'type' => 'deadlines',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_deadlines',
+		),
+		'gsdp_requirements' => array(
+			'description' => 'Requirements',
+			'type' => 'requirements',
+			'sanitize_callback' => 'WSUWP_Graduate_Degree_Programs::sanitize_requirements',
+		),
 		'gsdp_admission_requirements' => array(
 			'description' => 'Admission requirements',
 			'type' => 'textarea',
@@ -127,6 +137,7 @@ class WSUWP_Graduate_Degree_Programs {
 		require_once( dirname( __FILE__ ) . '/class-graduate-degree-faculty-taxonomy.php' );
 		require_once( dirname( __FILE__ ) . '/class-graduate-degree-program-name-taxonomy.php' );
 		require_once( dirname( __FILE__ ) . '/class-graduate-degree-degree-type-taxonomy.php' );
+		require_once( dirname( __FILE__ ) . '/class-graduate-degree-contact-taxonomy.php' );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
@@ -134,6 +145,7 @@ class WSUWP_Graduate_Degree_Programs {
 		add_action( 'init', 'WSUWP_Graduate_Degree_Faculty_Taxonomy', 15 );
 		add_action( 'init', 'WSUWP_Graduate_Degree_Program_Name_Taxonomy', 15 );
 		add_action( 'init', 'WSUWP_Graduate_Degree_Degree_Type_Taxonomy', 15 );
+		add_action( 'init', 'WSUWP_Graduate_Degree_Contact_Taxonomy', 15 );
 
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
@@ -195,7 +207,8 @@ class WSUWP_Graduate_Degree_Programs {
 	 */
 	public function register_meta() {
 		foreach ( $this->post_meta_keys as $key => $args ) {
-			if ( 'float' === $args['type'] ) {
+			// We have several data types that are stored as strings.
+			if ( 'float' === $args['type'] || 'deadlines' === $args['type'] || 'requirements' === $args['type'] ) {
 				$args['type'] = 'string';
 			}
 
@@ -239,6 +252,7 @@ class WSUWP_Graduate_Degree_Programs {
 		wp_nonce_field( 'save-gsdp-primary', '_gsdp_primary_nonce' );
 
 		echo '<div class="factsheet-primary-inputs">';
+
 		foreach ( $this->post_meta_keys as $key => $meta ) {
 			if ( ! isset( $data[ $key ] ) || ! isset( $data[ $key ][0] ) ) {
 				$data[ $key ] = array( false );
@@ -259,10 +273,34 @@ class WSUWP_Graduate_Degree_Programs {
 					<option value="1" <?php selected( 1, absint( $data[ $key ][0] ) ); ?>>Yes</option>
 				</select>
 				<?php
+			} elseif ( 'deadlines' === $meta['type'] || 'requirements' === $meta['type'] ) {
+				$field_data = json_decode( $data[ $key ][0] );
+
+				if ( empty( $field_data ) ) {
+					$field_data = array();
+				}
+
+				echo '<div class="factsheet-' . esc_attr( $meta['type'] ) . '-wrapper">';
+
+				foreach ( $field_data as $field_datum ) {
+					echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
+
+					?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="<?php echo esc_attr( $field_datum ); ?>" /><?php
+
+					echo '<span class="remove-factsheet-' . esc_attr( $meta['type'] ) . '-field">Remove</span></span>';
+				}
+
+				// Always provide an extra field to start with.
+				echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
+
+				?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" /></span><?php
+
+				echo '<span class="factsheet-add-' . esc_attr( $meta['type'] ) . '">Add</span></div>';
+
 			}
-			?>
-			</div>
-			<?php
+
+			echo '</div>';
+
 		}
 		echo '</div>';
 	}
@@ -285,6 +323,50 @@ class WSUWP_Graduate_Degree_Programs {
 		}
 
 		return $gpa;
+	}
+
+	/**
+	 * Sanitizes a set of deadlines stored in a string.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $deadlines
+	 *
+	 * @return string
+	 */
+	public static function sanitize_deadlines( $deadlines ) {
+		if ( ! is_array( $deadlines ) || 0 === count( $deadlines ) ) {
+			return '';
+		}
+
+		$deadlines = array_map( 'sanitize_text_field', $deadlines );
+		$deadlines = array_filter( $deadlines );
+
+		$deadlines = wp_json_encode( $deadlines );
+
+		return $deadlines;
+	}
+
+	/**
+	 * Sanitizes a set of requirements stored in a string.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @param array $requirements
+	 *
+	 * @return string
+	 */
+	public static function sanitize_requirements( $requirements ) {
+		if ( ! is_array( $requirements ) || 0 === count( $requirements ) ) {
+			return '';
+		}
+
+		$requirements = array_map( 'sanitize_text_field', $requirements );
+		$requirements = array_filter( $requirements );
+
+		$requirements = wp_json_encode( $requirements );
+
+		return $requirements;
 	}
 
 	/**

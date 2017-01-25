@@ -60,3 +60,14 @@ function WSUWP_Graduate_Degree_Program_Name_Taxonomy() {
 function WSUWP_Graduate_Degree_Degree_Type_Taxonomy() {
 	return WSUWP_Graduate_Degree_Degree_Type_Taxonomy::get_instance();
 }
+
+/**
+ * Retrieves the instance of the contact taxonomy.
+ *
+ * @since 0.0.1
+ *
+ * @return WSUWP_Graduate_Degree_Contact_Taxonomy
+ */
+function WSUWP_Graduate_Degree_Contact_Taxonomy() {
+	return WSUWP_Graduate_Degree_Contact_Taxonomy::get_instance();
+}
