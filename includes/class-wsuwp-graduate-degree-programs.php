@@ -297,7 +297,7 @@ class WSUWP_Graduate_Degree_Programs {
 					?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" /></span><?php
 				}
 
-				echo '<input type="buttom" class="add-factsheet-' . esc_attr( $meta['type'] ) . '-field button" value="Add" /></div>';
+				echo '<input type="button" class="add-factsheet-' . esc_attr( $meta['type'] ) . '-field button" value="Add" /></div>';
 
 			}
 
