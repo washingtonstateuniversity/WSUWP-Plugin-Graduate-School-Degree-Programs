@@ -290,12 +290,14 @@ class WSUWP_Graduate_Degree_Programs {
 					echo '<span class="remove-factsheet-' . esc_attr( $meta['type'] ) . '-field">Remove</span></span>';
 				}
 
-				// Always provide an extra field to start with.
-				echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
+				// If no fields have been added, provide an empty field by default.
+				if ( 0 === count( $field_data ) ) {
+					echo '<span class="factsheet-' . esc_attr( $meta['type'] ) . '-field">';
 
-				?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" /></span><?php
+					?><input type="text" name="<?php echo esc_attr( $key ); ?>[]" value="" /></span><?php
+				}
 
-				echo '<span class="factsheet-add-' . esc_attr( $meta['type'] ) . '">Add</span></div>';
+				echo '<input type="button" class="add-factsheet-' . esc_attr( $meta['type'] ) . '-field button" value="Add" /></div>';
 
 			}
 
