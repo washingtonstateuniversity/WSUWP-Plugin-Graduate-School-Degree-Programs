@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WSUWP Graduate Degree Programs
-Version: 0.0.1
+Version: 1.0.0
 Description: Tracks and displays degree programs from the Graduate School at WSU.
 Author: washingtonstateuniversity, jeremyfelt
 Author URI: https://web.wsu.edu/
