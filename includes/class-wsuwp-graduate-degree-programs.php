@@ -405,5 +405,19 @@ class WSUWP_Graduate_Degree_Programs {
 				update_post_meta( $post_id, $key, $_POST[ $key ] );
 			}
 		}
+
+		/**
+		 * Added the following to force update the last modified date since that doesn't happen
+		 * when you are updating post meta.
+		 */
+		remove_action( "save_post_{$this->post_type_slug}", array( $this, 'save_factsheet' ), 10, 2 );
+
+		$post = array(
+			'ID'                => $post_id,
+			'post_modified_gmt' => date( 'Y:m:d H:i:s' ),
+		);
+
+		wp_update_post( $post );
+
 	}
 }
